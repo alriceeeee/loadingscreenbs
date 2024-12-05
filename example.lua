@@ -1,4 +1,4 @@
-local source = loadstring(game:HttpGet("https://raw.githubusercontent.com/yourrepo/source.lua"))()
+local source = loadstring(game:HttpGet("https://raw.githubusercontent.com/alriceeeee/loadingscreenbs/refs/heads/main/source.lua"))()
 
 local config = {
     LoadingScreenText = "Loading...",
