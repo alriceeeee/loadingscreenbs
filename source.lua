@@ -32,9 +32,11 @@ function LoadingScreen.Init(config)
     task.spawn(function()
         task.wait(2)
         local fadeOut = TweenService:Create(Background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+        local textFadeOut = TweenService:Create(LoadingText, TweenInfo.new(0.5), {TextTransparency = 1})
         fadeOut:Play()
+        textFadeOut:Play()
         fadeOut.Completed:Wait()
-        ScreenGui.Enabled = false
+        ScreenGui:Destroy()
     end)
     
     local TaskGui = Instance.new("ScreenGui")
