@@ -29,6 +29,14 @@ LoadingText.Parent = Background
 function LoadingScreen.Init(config)
     LoadingText.Text = config.LoadingScreenText or "Loading..."
     
+    task.spawn(function()
+        task.wait(2)
+        local fadeOut = TweenService:Create(Background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+        fadeOut:Play()
+        fadeOut.Completed:Wait()
+        ScreenGui.Enabled = false
+    end)
+    
     local TaskGui = Instance.new("ScreenGui")
     local TaskFrame = Instance.new("Frame")
     local TaskList = Instance.new("Frame")
@@ -74,10 +82,6 @@ function LoadingScreen.Init(config)
     DoneButton.Parent = TaskFrame
     
     DoneButton.MouseButton1Click:Connect(function()
-        local fadeOut = TweenService:Create(Background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
-        fadeOut:Play()
-        fadeOut.Completed:Wait()
-        ScreenGui.Enabled = false
         TaskGui:Destroy()
         if config.Callback then config.Callback() end
     end)
