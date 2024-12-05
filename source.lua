@@ -27,18 +27,20 @@ LoadingText.Font = Enum.Font.GothamBold
 LoadingText.Parent = Background
 
 function LoadingScreen.Init(config)
-    LoadingText.Text = config.LoadingScreenText or "Loading..."
+    LoadingText.Text = config.LoadingScreenText
     
+    -- Loading screen fade out
     task.spawn(function()
         task.wait(2)
         local fadeOut = TweenService:Create(Background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
         local textFadeOut = TweenService:Create(LoadingText, TweenInfo.new(0.5), {TextTransparency = 1})
         fadeOut:Play()
         textFadeOut:Play()
-        fadeOut.Completed:Wait()
+        textFadeOut.Completed:Wait()
         ScreenGui:Destroy()
     end)
     
+    -- Create tasks UI separately
     local TaskGui = Instance.new("ScreenGui")
     local TaskFrame = Instance.new("Frame")
     local TaskList = Instance.new("Frame")
