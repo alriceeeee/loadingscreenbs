@@ -41,6 +41,7 @@ function LoadingScreen.Init(config)
     
     blurTween:Play()
     textFadeIn:Play()
+    textFadeIn.Completed:Wait()
     
     task.spawn(function()
         for i = 1, #fullText do
