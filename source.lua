@@ -126,3 +126,4 @@ function LoadingScreen.Init(config)
 end
 
 return LoadingScreen
+
