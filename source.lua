@@ -76,7 +76,7 @@ function LoadingScreen.Init(config)
     
     TaskList.Name = "TaskList"
     TaskList.Size = UDim2.new(1, 0, 0.8, 0)
-    TaskList.BackgroundTransparency = 1
+    TaskList.BackgroundTransparency = 0
     TaskList.Parent = TaskFrame
     
     local taskHeight = 1 / #config.Tasks
