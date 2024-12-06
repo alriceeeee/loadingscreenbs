@@ -33,7 +33,8 @@ LoadingText.Font = Enum.Font.GothamBold
 LoadingText.Parent = Background
 
 function LoadingScreen.Init(config)
-    LoadingText.Text = config.LoadingScreenText
+    local fullText = config.LoadingScreenText
+    LoadingText.Text = ""
     
     local blurTween = TweenService:Create(BlurEffect, TweenInfo.new(0.5), {Size = 20})
     local textFadeIn = TweenService:Create(LoadingText, TweenInfo.new(0.5), {TextTransparency = 0})
@@ -42,8 +43,8 @@ function LoadingScreen.Init(config)
     textFadeIn:Play()
     
     task.spawn(function()
-        for i = 1, #config.LoadingScreenText do
-            LoadingText.Text = string.sub(config.LoadingScreenText, 1, i)
+        for i = 1, #fullText do
+            LoadingText.Text = string.sub(fullText, 1, i)
             task.wait(0.05)
         end
     end)
