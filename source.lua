@@ -5,8 +5,12 @@ local Player = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
 
 local ScreenGui = Instance.new("ScreenGui")
+local BlurEffect = Instance.new("BlurEffect")
 local Background = Instance.new("Frame")
 local LoadingText = Instance.new("TextLabel")
+
+BlurEffect.Size = 0
+BlurEffect.Parent = game:GetService("Lighting")
 
 ScreenGui.Name = "LoadingScreen"
 ScreenGui.Parent = Player.PlayerGui
@@ -15,6 +19,7 @@ ScreenGui.ResetOnSpawn = false
 Background.Name = "Background"
 Background.Size = UDim2.new(1, 0, 1, 0)
 Background.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Background.BackgroundTransparency = 0.7
 Background.Parent = ScreenGui
 
 LoadingText.Name = "LoadingText"
@@ -23,24 +28,34 @@ LoadingText.Position = UDim2.new(0.25, 0, 0.45, 0)
 LoadingText.BackgroundTransparency = 1
 LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
 LoadingText.TextScaled = true
+LoadingText.TextTransparency = 1
 LoadingText.Font = Enum.Font.GothamBold
 LoadingText.Parent = Background
 
 function LoadingScreen.Init(config)
     LoadingText.Text = config.LoadingScreenText
     
-    -- Loading screen fade out
+    local blurTween = TweenService:Create(BlurEffect, TweenInfo.new(0.5), {Size = 20})
+    local textFadeIn = TweenService:Create(LoadingText, TweenInfo.new(0.5), {TextTransparency = 0})
+    
+    blurTween:Play()
+    textFadeIn:Play()
+    
     task.spawn(function()
         task.wait(2)
         local fadeOut = TweenService:Create(Background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
         local textFadeOut = TweenService:Create(LoadingText, TweenInfo.new(0.5), {TextTransparency = 1})
+        local blurFadeOut = TweenService:Create(BlurEffect, TweenInfo.new(0.5), {Size = 0})
+        
         fadeOut:Play()
         textFadeOut:Play()
+        blurFadeOut:Play()
+        
         textFadeOut.Completed:Wait()
+        BlurEffect:Destroy()
         ScreenGui:Destroy()
     end)
     
-    -- Create tasks UI separately
     local TaskGui = Instance.new("ScreenGui")
     local TaskFrame = Instance.new("Frame")
     local TaskList = Instance.new("Frame")
@@ -51,9 +66,13 @@ function LoadingScreen.Init(config)
     
     TaskFrame.Name = "TaskFrame"
     TaskFrame.Size = UDim2.new(0.2, 0, 0.3, 0)
-    TaskFrame.Position = UDim2.new(0.8, -10, 0.7, -10)
-    TaskFrame.BackgroundTransparency = 1
+    TaskFrame.Position = UDim2.new(1.2, 0, 0.7, -10)
+    TaskFrame.BackgroundTransparency = 0.5
+    TaskFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     TaskFrame.Parent = TaskGui
+    
+    local slideIn = TweenService:Create(TaskFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {Position = UDim2.new(0.8, -10, 0.7, -10)})
+    slideIn:Play()
     
     TaskList.Name = "TaskList"
     TaskList.Size = UDim2.new(1, 0, 0.8, 0)
@@ -72,7 +91,11 @@ function LoadingScreen.Init(config)
         TaskLabel.TextWrapped = true
         TaskLabel.Font = Enum.Font.GothamBold
         TaskLabel.TextSize = 14
+        TaskLabel.TextTransparency = 1
         TaskLabel.Parent = TaskList
+        
+        local labelFade = TweenService:Create(TaskLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, i * 0.1), {TextTransparency = 0})
+        labelFade:Play()
     end
     
     DoneButton.Name = "DoneButton"
@@ -86,6 +109,9 @@ function LoadingScreen.Init(config)
     DoneButton.Parent = TaskFrame
     
     DoneButton.MouseButton1Click:Connect(function()
+        local slideOut = TweenService:Create(TaskFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Position = UDim2.new(1.2, 0, 0.7, -10)})
+        slideOut:Play()
+        slideOut.Completed:Wait()
         TaskGui:Destroy()
         if config.Callback then config.Callback() end
     end)
