@@ -99,14 +99,23 @@ function LoadingScreen.Init(config)
         local animationName = (config.TextAnimation or "TypeWriter"):lower()
         local selectedAnimation
         
+        print("[LoadingScreen] Attempting to use animation:", animationName)
+        
         for name, animation in pairs(TextAnimations) do
             if name:lower() == animationName then
                 selectedAnimation = animation
+                print("[LoadingScreen] Found matching animation:", name)
                 break
             end
         end
         
-        (selectedAnimation or TextAnimations.TypeWriter)(LoadingText, fullText)
+        if not selectedAnimation then
+            print("[LoadingScreen] Warning: Animation not found! Defaulting to TypeWriter")
+            selectedAnimation = TextAnimations.TypeWriter
+        end
+        
+        print("[LoadingScreen] Starting animation with text:", config.LoadingScreenText)
+        selectedAnimation(LoadingText, fullText)
     end)
     
     task.spawn(function()

@@ -1,5 +1,7 @@
 local source = loadstring(game:HttpGet("https://raw.githubusercontent.com/alriceeeee/loadingscreenbs/refs/heads/main/source.lua"))()
 
+print("[LoadingScreen] Library loaded successfully")
+
 local config = {
     TextAnimation = "TypeWriter", -- TypeWriter, FadeInLetters, Bounce, Wave (the types of animations)
     LoadingScreenText = "Loading this dumb loading screen...",
@@ -9,7 +11,6 @@ local config = {
     },
     ButtonText = "I have completed these tasks",
     Callback = function()
-        print("Tasks completed, loading main UI...")
         --[[ Load your other UI crap here, for example:
         local NEVERLOSE = loadstring(game:HttpGet("https://raw.githubusercontent.com/alriceeeee/NEVERLOSE-UI-Nightly/main/source.lua"))()
 
@@ -34,25 +35,25 @@ local Example = ExampleTab:AddSection('Example',"left")
 Example:AddLabel("Label")
 
 Example:AddButton("Test Notification",function()
-	print('button')
-	Notification:Notify("info","Notification","Test Notification")
-	Notification:Notify("warning","Notification","Don't Spam",4)
+    print('button')
+    Notification:Notify("info","Notification","Test Notification")
+    Notification:Notify("warning","Notification","Don't Spam",4)
 end)
 
 Example:AddToggle('Toggle',false,function(val)
-	print("Toggle",val)
+    print("Toggle",val)
 end)
 
 Example:AddKeybind('Keybind',Enum.KeyCode.X,function(val)
-	print('keybind',val)
+    print('keybind',val)
 end)
 
 Example:AddSlider('Slider',1,100,50,function(val)
-	print('slider',val)
+    print('slider',val)
 end)
 
 Example:AddDropdown('Dropdown',{1,2,3},2,function(val)
-	print("dropdown",val)
+    print("dropdown",val)
 end)
 
 -- Section Function --
@@ -60,11 +61,11 @@ end)
 local Test = ExampleTab:AddSection('Test',"right")
 
 Test:AddToggle('Example',true,function(val)
-	if val then
-		Example:Show()
-	else
-		Example:Hide()
-	end
+    if val then
+        Example:Show()
+    else
+        Example:Hide()
+    end
 end)
 
 --------------------
@@ -89,7 +90,9 @@ rejoinGame()
 print("Attempting to rejoin the current game...")
 end)
         --]]
+        print("[LoadingScreen] Tasks completed, loading main UI...")
     end
 }
 
+print("[LoadingScreen] Initializing with animation:", config.TextAnimation)
 source.Init(config)
