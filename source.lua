@@ -4,6 +4,58 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
 
+local TextAnimations = {
+    TypeWriter = function(label, text)
+        for i = 1, #text do
+            label.Text = string.sub(text, 1, i)
+            task.wait(0.05)
+        end
+    end,
+    
+    FadeInLetters = function(label, text)
+        label.Text = text
+        for i = 1, #text do
+            local displayText = ""
+            for j = 1, #text do
+                if j <= i then
+                    displayText = displayText .. string.sub(text, j, j)
+                else
+                    displayText = displayText .. " "
+                end
+            end
+            label.Text = displayText
+            task.wait(0.05)
+        end
+    end,
+    
+    Bounce = function(label, text)
+        label.Text = text
+        local originalPosition = label.Position
+        for i = 1, #text do
+            local char = string.sub(text, i, i)
+            label.Position = originalPosition + UDim2.new(0, 0, 0.05, 0)
+            local bounceDown = TweenService:Create(label, TweenInfo.new(0.1), {Position = originalPosition})
+            bounceDown:Play()
+            task.wait(0.1)
+        end
+    end,
+    
+    Wave = function(label, text)
+        label.Text = text
+        while label.Parent do
+            for i = 1, #text do
+                local scaleUp = TweenService:Create(label, TweenInfo.new(0.2), {TextSize = label.TextSize + 5})
+                local scaleDown = TweenService:Create(label, TweenInfo.new(0.2), {TextSize = label.TextSize})
+                scaleUp:Play()
+                task.wait(0.1)
+                scaleDown:Play()
+                task.wait(0.1)
+            end
+            task.wait(1)
+        end
+    end
+}
+
 local ScreenGui = Instance.new("ScreenGui")
 local BlurEffect = Instance.new("BlurEffect")
 local Background = Instance.new("Frame")
@@ -44,10 +96,8 @@ function LoadingScreen.Init(config)
     textFadeIn.Completed:Wait()
     
     task.spawn(function()
-        for i = 1, #fullText do
-            LoadingText.Text = string.sub(fullText, 1, i)
-            task.wait(0.05)
-        end
+        local selectedAnimation = TextAnimations[config.TextAnimation] or TextAnimations.TypeWriter
+        selectedAnimation(LoadingText, fullText)
     end)
     
     task.spawn(function()
