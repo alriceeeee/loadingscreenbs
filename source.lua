@@ -96,8 +96,17 @@ function LoadingScreen.Init(config)
     textFadeIn.Completed:Wait()
     
     task.spawn(function()
-        local selectedAnimation = TextAnimations[config.TextAnimation] or TextAnimations.TypeWriter
-        selectedAnimation(LoadingText, fullText)
+        local animationName = (config.TextAnimation or "TypeWriter"):lower()
+        local selectedAnimation
+        
+        for name, animation in pairs(TextAnimations) do
+            if name:lower() == animationName then
+                selectedAnimation = animation
+                break
+            end
+        end
+        
+        (selectedAnimation or TextAnimations.TypeWriter)(LoadingText, fullText)
     end)
     
     task.spawn(function()
