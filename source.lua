@@ -10,6 +10,7 @@ local TextAnimations = {
             label.Text = string.sub(text, 1, i)
             task.wait(0.05)
         end
+        return true
     end,
     
     FadeInLetters = function(label, text)
@@ -42,6 +43,7 @@ local TextAnimations = {
         for _, letterLabel in ipairs(letters) do
             letterLabel:Destroy()
         end
+        return true
     end,
     
     Bounce = function(label, text)
@@ -59,29 +61,30 @@ local TextAnimations = {
             bounceDown:Play()
             task.wait(0.5)
         end
+        return true
     end,
     
     Wave = function(label, text)
         label.Text = text
-        local originalSize = label.TextSize
+        local originalTextSize = 14
+        label.TextSize = originalTextSize
         local isAnimating = true
         
-        task.spawn(function()
-            while isAnimating and label.Parent do
-                local waveUp = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
-                    {TextSize = originalSize + 8})
-                local waveDown = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
-                    {TextSize = originalSize})
-                
-                waveUp:Play()
-                task.wait(0.5)
-                waveDown:Play()
-                task.wait(0.5)
-            end
-        end)
+        for i = 1, 4 do
+            if not isAnimating then break end
+            local waveUp = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
+                {TextSize = originalTextSize + 8})
+            local waveDown = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
+                {TextSize = originalTextSize})
+            
+            waveUp:Play()
+            task.wait(0.5)
+            waveDown:Play()
+            task.wait(0.5)
+        end
         
-        task.wait(2)
         isAnimating = false
+        return true
     end
 }
 
@@ -124,6 +127,8 @@ function LoadingScreen.Init(config)
     textFadeIn:Play()
     textFadeIn.Completed:Wait()
     
+    local animationComplete = false
+    
     task.spawn(function()
         local animationName = (config.TextAnimation or "TypeWriter"):lower()
         local selectedAnimation
@@ -144,11 +149,13 @@ function LoadingScreen.Init(config)
         end
         
         print("[LoadingScreen] Starting animation with text:", config.LoadingScreenText)
-        selectedAnimation(LoadingText, fullText)
+        animationComplete = selectedAnimation(LoadingText, fullText)
     end)
     
     task.spawn(function()
-        task.wait(2)
+        repeat task.wait() until animationComplete
+        task.wait(1) -- Extra delay after animation completes
+        
         local fadeOut = TweenService:Create(Background, TweenInfo.new(0.5), {BackgroundTransparency = 1})
         local textFadeOut = TweenService:Create(LoadingText, TweenInfo.new(0.5), {TextTransparency = 1})
         local blurFadeOut = TweenService:Create(BlurEffect, TweenInfo.new(0.5), {Size = 0})
