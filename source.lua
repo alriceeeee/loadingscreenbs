@@ -66,24 +66,22 @@ local TextAnimations = {
     
     Wave = function(label, text)
         label.Text = text
-        local originalTextSize = 14
+        label.TextScaled = false
+        local originalTextSize = 24
         label.TextSize = originalTextSize
-        local isAnimating = true
         
         for i = 1, 4 do
-            if not isAnimating then break end
             local waveUp = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
-                {TextSize = originalTextSize + 8})
+                {TextSize = originalTextSize + 16})
             local waveDown = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
                 {TextSize = originalTextSize})
             
             waveUp:Play()
-            task.wait(1)
+            waveUp.Completed:Wait()
             waveDown:Play()
-            task.wait(1)
+            waveDown.Completed:Wait()
         end
         
-        isAnimating = false
         return true
     end
 }
