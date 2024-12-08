@@ -50,16 +50,16 @@ local TextAnimations = {
         label.Text = text
         local originalPosition = label.Position
         
-        for i = 1, #text do
+        for i = 1, 3 do
             local bounceUp = TweenService:Create(label, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
                 {Position = originalPosition - UDim2.new(0, 0, 0.02, 0)})
             local bounceDown = TweenService:Create(label, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), 
                 {Position = originalPosition})
             
             bounceUp:Play()
-            task.wait(0.5)
+            task.wait(0.2)
             bounceDown:Play()
-            task.wait(0.5)
+            task.wait(0.2)
         end
         return true
     end,
@@ -78,9 +78,9 @@ local TextAnimations = {
                 {TextSize = originalTextSize})
             
             waveUp:Play()
-            task.wait(0.5)
+            task.wait(1)
             waveDown:Play()
-            task.wait(0.5)
+            task.wait(1)
         end
         
         isAnimating = false
