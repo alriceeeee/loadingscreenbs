@@ -13,46 +13,75 @@ local TextAnimations = {
     end,
     
     FadeInLetters = function(label, text)
-        label.Text = text
+        local letters = {}
+        label.Text = ""
+        
         for i = 1, #text do
-            local displayText = ""
-            for j = 1, #text do
-                if j <= i then
-                    displayText = displayText .. string.sub(text, j, j)
-                else
-                    displayText = displayText .. " "
-                end
-            end
-            label.Text = displayText
-            task.wait(0.05)
+            local letterLabel = Instance.new("TextLabel")
+            letterLabel.BackgroundTransparency = 1
+            letterLabel.Size = UDim2.new(1/#text, 0, 1, 0)
+            letterLabel.Position = UDim2.new((i-1)/#text, 0, 0, 0)
+            letterLabel.Text = string.sub(text, i, i)
+            letterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            letterLabel.TextScaled = true
+            letterLabel.Font = label.Font
+            letterLabel.TextTransparency = 1
+            letterLabel.Parent = label
+            
+            table.insert(letters, letterLabel)
+        end
+        
+        for _, letterLabel in ipairs(letters) do
+            local fadeIn = TweenService:Create(letterLabel, TweenInfo.new(0.3), {TextTransparency = 0})
+            fadeIn:Play()
+            task.wait(0.1)
+        end
+        
+        task.wait(0.2)
+        label.Text = text
+        for _, letterLabel in ipairs(letters) do
+            letterLabel:Destroy()
         end
     end,
     
     Bounce = function(label, text)
         label.Text = text
         local originalPosition = label.Position
+        
         for i = 1, #text do
-            local char = string.sub(text, i, i)
-            label.Position = originalPosition + UDim2.new(0, 0, 0.05, 0)
-            local bounceDown = TweenService:Create(label, TweenInfo.new(0.1), {Position = originalPosition})
+            local bounceUp = TweenService:Create(label, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
+                {Position = originalPosition - UDim2.new(0, 0, 0.02, 0)})
+            local bounceDown = TweenService:Create(label, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), 
+                {Position = originalPosition})
+            
+            bounceUp:Play()
+            task.wait(0.5)
             bounceDown:Play()
-            task.wait(0.1)
+            task.wait(0.5)
         end
     end,
     
     Wave = function(label, text)
         label.Text = text
-        while label.Parent do
-            for i = 1, #text do
-                local scaleUp = TweenService:Create(label, TweenInfo.new(0.2), {TextSize = label.TextSize + 5})
-                local scaleDown = TweenService:Create(label, TweenInfo.new(0.2), {TextSize = label.TextSize})
-                scaleUp:Play()
-                task.wait(0.1)
-                scaleDown:Play()
-                task.wait(0.1)
+        local originalSize = label.TextSize
+        local isAnimating = true
+        
+        task.spawn(function()
+            while isAnimating and label.Parent do
+                local waveUp = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
+                    {TextSize = originalSize + 8})
+                local waveDown = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
+                    {TextSize = originalSize})
+                
+                waveUp:Play()
+                task.wait(0.5)
+                waveDown:Play()
+                task.wait(0.5)
             end
-            task.wait(1)
-        end
+        end)
+        
+        task.wait(2)
+        isAnimating = false
     end
 }
 
