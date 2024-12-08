@@ -65,21 +65,40 @@ local TextAnimations = {
     end,
     
     Wave = function(label, text)
-        label.Text = text
-        label.TextScaled = false
-        local originalTextSize = 24
-        label.TextSize = originalTextSize
+        label.Text = ""
+        local letters = {}
         
-        for i = 1, 4 do
-            local waveUp = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
-                {TextSize = originalTextSize + 16})
-            local waveDown = TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Sine), 
-                {TextSize = originalTextSize})
+        for i = 1, #text do
+            local letterLabel = Instance.new("TextLabel")
+            letterLabel.BackgroundTransparency = 1
+            letterLabel.Size = UDim2.new(1/#text, 0, 1, 0)
+            letterLabel.Position = UDim2.new((i-1)/#text, 0, 0, 0)
+            letterLabel.Text = string.sub(text, i, i)
+            letterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            letterLabel.TextSize = 24
+            letterLabel.Font = label.Font
+            letterLabel.Parent = label
             
-            waveUp:Play()
-            waveUp.Completed:Wait()
-            waveDown:Play()
-            waveDown.Completed:Wait()
+            table.insert(letters, letterLabel)
+        end
+        
+        for _ = 1, 2 do  -- Do 2 complete wave cycles
+            for i, letterLabel in ipairs(letters) do
+                local waveUp = TweenService:Create(letterLabel, TweenInfo.new(0.2, Enum.EasingStyle.Sine), 
+                    {Position = letterLabel.Position - UDim2.new(0, 0, 0.1, 0)})
+                local waveDown = TweenService:Create(letterLabel, TweenInfo.new(0.2, Enum.EasingStyle.Sine), 
+                    {Position = letterLabel.Position})
+                
+                waveUp:Play()
+                task.wait(0.05)  -- Small delay between each letter
+                waveDown:Play()
+            end
+            task.wait(0.4)  -- Wait before next wave cycle
+        end
+        
+        label.Text = text  -- Restore original text
+        for _, letterLabel in ipairs(letters) do
+            letterLabel:Destroy()
         end
         
         return true
